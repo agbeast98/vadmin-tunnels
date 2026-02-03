@@ -8,7 +8,7 @@
 
 set -e
 
-# رنگ‌ها
+# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -16,10 +16,10 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-# متغیرهای مسیر
+# Paths
 REPO_URL="https://raw.githubusercontent.com/agbeast98/vadmin-tunnels/main"
 
-# توابع
+# Functions
 print_success() {
     echo -e "${GREEN}✓ $1${NC}"
 }
@@ -48,95 +48,95 @@ print_header() {
     echo -e "${NC}"
 }
 
-# چک root
+# Check root
 check_root() {
     if [[ $EUID -ne 0 ]]; then
-        print_error "این اسکریپت باید با دسترسی root اجرا شود!"
+        print_error "In script bayad ba dastresi root ejra shavad!"
         echo ""
-        echo "لطفاً دوباره با sudo اجرا کنید:"
+        echo "Lotfan dobare ba sudo ejra konid:"
         echo "  sudo bash install.sh"
         exit 1
     fi
 }
 
-# دانلود و اجرای اسکریپت
+# Download and run script
 run_script() {
     local script_name=$1
     local script_url="${REPO_URL}/${script_name}"
     
-    print_info "دانلود اسکریپت..."
+    print_info "Dar hal download script..."
     
     if curl -fsSL "$script_url" -o "/tmp/${script_name}"; then
         chmod +x "/tmp/${script_name}"
         bash "/tmp/${script_name}"
         rm -f "/tmp/${script_name}"
     else
-        print_error "خطا در دانلود اسکریپت!"
+        print_error "Khata dar download script!"
         echo ""
-        echo "لطفاً اتصال اینترنت خود را بررسی کنید."
+        echo "Lotfan ettesal internet khod ra barresi konid."
         exit 1
     fi
 }
 
-# منوی اصلی
+# Main menu
 show_menu() {
     print_header
     
     echo ""
-    echo "لطفاً یکی از گزینه‌های زیر را انتخاب کنید:"
+    echo "Lotfan yeki az gozine-haye zir ra entekhab konid:"
     echo ""
     echo -e "${YELLOW}╔═══════════════════════════════════════════════════════════╗${NC}"
     echo -e "${YELLOW}║${NC}                                                           ${YELLOW}║${NC}"
-    echo -e "${YELLOW}║${NC}  ${GREEN}[1]${NC} سرور خارج (External Server)                       ${YELLOW}║${NC}"
-    echo -e "${YELLOW}║${NC}      └─ نصب Hysteria2 Server                            ${YELLOW}║${NC}"
+    echo -e "${YELLOW}║${NC}  ${GREEN}[1]${NC} Server Kharej (External Server)                      ${YELLOW}║${NC}"
+    echo -e "${YELLOW}║${NC}      └─ Nasb Hysteria2 Server                            ${YELLOW}║${NC}"
     echo -e "${YELLOW}║${NC}                                                           ${YELLOW}║${NC}"
-    echo -e "${YELLOW}║${NC}  ${GREEN}[2]${NC} سرور ایران (Iran Server)                          ${YELLOW}║${NC}"
-    echo -e "${YELLOW}║${NC}      └─ نصب Hysteria2 Client + HAProxy                  ${YELLOW}║${NC}"
+    echo -e "${YELLOW}║${NC}  ${GREEN}[2]${NC} Server Iran (Iran Server)                            ${YELLOW}║${NC}"
+    echo -e "${YELLOW}║${NC}      └─ Nasb Hysteria2 Client + HAProxy                  ${YELLOW}║${NC}"
     echo -e "${YELLOW}║${NC}                                                           ${YELLOW}║${NC}"
-    echo -e "${YELLOW}║${NC}  ${RED}[3]${NC} حذف (Uninstall)                                    ${YELLOW}║${NC}"
-    echo -e "${YELLOW}║${NC}      └─ حذف کامل تانل                                   ${YELLOW}║${NC}"
+    echo -e "${YELLOW}║${NC}  ${RED}[3]${NC} Hazf (Uninstall)                                     ${YELLOW}║${NC}"
+    echo -e "${YELLOW}║${NC}      └─ Hazf kamel tunnel                                ${YELLOW}║${NC}"
     echo -e "${YELLOW}║${NC}                                                           ${YELLOW}║${NC}"
-    echo -e "${YELLOW}║${NC}  ${BLUE}[0]${NC} خروج (Exit)                                        ${YELLOW}║${NC}"
+    echo -e "${YELLOW}║${NC}  ${BLUE}[0]${NC} Khorooj (Exit)                                       ${YELLOW}║${NC}"
     echo -e "${YELLOW}║${NC}                                                           ${YELLOW}║${NC}"
     echo -e "${YELLOW}╚═══════════════════════════════════════════════════════════╝${NC}"
     echo ""
     
-    read -p "انتخاب شما [0-3]: " choice
+    read -p "Entekhab shoma [0-3]: " choice
     
     case $choice in
         1)
             echo ""
-            print_info "شروع نصب سرور خارج..."
+            print_info "Shoro nasb server kharej..."
             sleep 1
             run_script "server-install.sh"
             ;;
         2)
             echo ""
-            print_info "شروع نصب سرور ایران..."
+            print_info "Shoro nasb server iran..."
             sleep 1
             run_script "client-install.sh"
             ;;
         3)
             echo ""
-            print_info "شروع حذف..."
+            print_info "Shoro hazf..."
             sleep 1
             run_script "uninstall.sh"
             ;;
         0)
             echo ""
-            print_info "خروج از برنامه..."
+            print_info "Khorooj az barnameh..."
             exit 0
             ;;
         *)
             echo ""
-            print_error "گزینه نامعتبر! لطفاً دوباره تلاش کنید."
+            print_error "Gozine namotabar! Lotfan dobare talash konid."
             sleep 2
             show_menu
             ;;
     esac
 }
 
-# اجرای اصلی
+# Main
 main() {
     check_root
     show_menu
